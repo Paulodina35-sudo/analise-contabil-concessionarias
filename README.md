@@ -1,4 +1,4 @@
-# Analise contabil automatizada em R
+# Analise contábil automatizada em R
 
 Scripts em R que padronizam as demonstrações financeiras de concessionárias de aeroportos e calculam a variação entre dois anos. Fazem parte do pôster **"Proposição de Análise Automatizada Contábil com R"**, apresentado no XI Encontro de Iniciação Acadêmica da UFC.
 
