@@ -2,9 +2,10 @@
 
 Scripts em R que padronizam as demonstrações financeiras de concessionárias de aeroportos e calculam a variação entre dois anos. Fazem parte do pôster **"Proposição de Análise Automatizada Contábil com R"**, apresentado no XI Encontro de Iniciação Acadêmica da UFC.
 
-**Autores:** Paulo Fuakala Dina e Sofia dos Santos Ferreira (Finanças, UFC). Apoio: PIBITI/CNPq · UFC.
+**Autores:** Paulo Fuakala Dina e Sofia dos Santos Ferreira (Finanças, UFC).
+** Orientador:* Francisco Gildemir Ferreira da Silva.
 
-A versão final dos scripts foi revisada por nós, com ajuda de IA (Claude, Anthropic).
+A versão final dos scripts foi revisada por nós, com ajuda de IA.
 
 ## O que o código faz
 
@@ -19,7 +20,7 @@ Para cada planilha de entrada, o código:
 
 ## Arquivos
 
-| Arquivo | Função |
+| Arquivo   | Função |
 |---|---|
 | `funcoes_padronizacao.R` | Função `padronizar_planilha()`, usada pelos três scripts |
 | `Aeroporto_RJ_2025.R` | Concessionária Aeroporto Rio de Janeiro, 2025 vs 2024 |
