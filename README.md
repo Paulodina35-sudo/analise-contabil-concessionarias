@@ -3,7 +3,7 @@
 Scripts em R que padronizam as demonstrações financeiras de concessionárias de aeroportos e calculam a variação entre dois anos. Fazem parte do pôster **"Proposição de Análise Automatizada Contábil com R"**, apresentado no XI Encontro de Iniciação Acadêmica da UFC.
 
 **Autores:** Paulo Fuakala Dina e Sofia dos Santos Ferreira (Finanças, UFC).
-**Orientador:* Francisco Gildemir Ferreira da Silva.
+**Orientador:** Francisco Gildemir Ferreira da Silva.
 
 A versão final dos scripts foi revisada por nós, com ajuda de IA.
 
