@@ -156,7 +156,6 @@ Se algum valor não seguir o formato (por exemplo, `1234.56` com `dec = ","`), a
 | `Concessionaria_dos_Aeroportos_de_Manaus.R` | Concessionária dos Aeroportos da Amazônia, 2024 vs 2023 |
 | `exemplo_ficticio.xlsx` | Dados fictícios para testar a função (Excel) |
 | `exemplo_ficticio.csv` | Os mesmos dados fictícios, em CSV |
-| `tests/testthat/test-padronizacao.R` | Testes automáticos da função (veja [Testes](#testes)) |
 | `Poster_Paulo_Dina.pdf` | Pôster apresentado no encontro |
 
 As planilhas das concessionárias **não** estão neste repositório.
@@ -171,17 +170,6 @@ Este código faz a **padronização e o cálculo das variações**. Os indicador
 
 Próximo passo: automatizar o cálculo dos indicadores (liquidez, estrutura de capital, endividamento e rentabilidade), tendo como base o pacote [adcontabil](https://github.com/LissandroSousa/adcontabil.R).
 
-## Testes
-
-Os testes usam só dados fictícios e gravam tudo em pastas temporárias. Com o diretório de trabalho na raiz do projeto:
-
-```r
-install.packages("testthat")   # uma vez
-testthat::test_dir("tests/testthat")
-```
-
-Eles conferem, entre outros pontos, a tabela do exemplo deste README, a base negativa e a base zero, o CSV nos formatos brasileiro e americano e as mensagens de erro.
-
 ## Contribuição
 
 Contribuições são bem-vindas. Para sugerir uma melhoria ou relatar um problema:
@@ -189,7 +177,7 @@ Contribuições são bem-vindas. Para sugerir uma melhoria ou relatar um problem
 1. abra uma *issue* descrevendo o que aconteceu (de preferência com a mensagem de erro e um exemplo pequeno, com dados fictícios);
 2. para propor uma alteração no código, faça um *fork*, crie uma *branch* e envie um *pull request*.
 
-Para incluir uma nova concessionária, copie um dos scripts (por exemplo, `PRS_Aeroporto_25.R`) e troque os caminhos de entrada e de saída. Não envie demonstrações que não sejam públicas (a pasta `Coleta de dados/` já está no `.gitignore`) e rode os testes antes de abrir o *pull request*.
+Para incluir uma nova concessionária, copie um dos scripts (por exemplo, `PRS_Aeroporto_25.R`) e troque os caminhos de entrada e de saída. Não envie demonstrações que não sejam públicas (a pasta `Coleta de dados/` já está no `.gitignore`).
 
 ## Licença
 
