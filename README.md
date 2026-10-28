@@ -10,10 +10,10 @@ A versão final dos scripts foi revisada com ajuda de IA.
 ## Funcionalidades
 
 - **Importação de arquivo local** em `.xlsx`, `.xls` ou `.csv` (veja [Importação de arquivo local (CSV)](#importação-de-arquivo-local-csv)).
-- **Padronização** do nome da coluna de indicadores e correção de grafia (veja [Padronização](#padronização)).
+- **Padronização** do nome da coluna de indicadores e correção de grafia por tabela (veja [Padronização](#padronização)).
 - **Variação absoluta e percentual** entre o ano mais recente e o ano anterior, com tratamento de base negativa e de divisão por zero.
 - **Detecção automática dos anos**: funciona com 2025 vs 2024, 2024 vs 2023 e assim por diante.
-- **Conversão de números no formato brasileiro** (`1.234,56`, `(500,00)` para negativo, `-` para zero) quando o arquivo traz texto em vez de número.
+- **Conversão de números em texto** (formato brasileiro por padrão: `1.234,56`, `(500,00)` para negativo, `-` para zero). Texto fora do formato esperado gera erro, em vez de ser lido errado.
 - **Exportação em `.xlsx`**, sem nunca sobrescrever o arquivo de entrada.
 - **Mensagens de erro claras** quando o arquivo não tem a estrutura esperada.
 
@@ -83,12 +83,22 @@ Para cada arquivo de entrada, a função `padronizar_planilha()`:
 1. lê o arquivo e confere se ele tem a coluna `MEDIDAS FINANCEIRAS`;
 2. renomeia essa coluna para `indicador_original`;
 3. identifica as duas colunas de ano (o mais recente é o ano "atual");
-4. converte para número os valores que vierem como texto no formato brasileiro;
+4. converte para número os valores que vierem como texto (formato definido por `dec`, padrão brasileiro) e interrompe com erro se algum valor não seguir o formato;
 5. calcula a variação absoluta (`variacao`) e a variação percentual (`variacao_percentual`);
-6. corrige a grafia "Intagível" para "Intangível";
+6. remove espaços repetidos nos nomes dos indicadores e corrige a grafia pela tabela `CORRECOES_GRAFIA` (hoje: "Intagível" → "Intangível", sem diferenciar maiúsculas de minúsculas);
 7. grava uma nova planilha `.xlsx`, criando a pasta de saída se ela não existir.
 
 **Variação percentual:** `(ano atual − ano base) / |ano base| × 100`, arredondada em 2 casas. Usa-se o valor absoluto do ano base para que a mudança de prejuízo para lucro apareça como variação positiva. Quando o ano base é zero ou está vazio, o resultado fica vazio (`NA`).
+
+**Correção de grafia:** a tabela `CORRECOES_GRAFIA`, no início de `funcoes_padronizacao.R`, tem uma coluna `errado` e uma `certo`. Para acrescentar uma correção, inclua um valor em cada coluna ou passe o argumento `correcoes` (que substitui a tabela padrão; use `rbind(CORRECOES_GRAFIA, ...)` para somar):
+
+```r
+padronizar_planilha("dados.csv", "dados_padronizado.xlsx",
+                    correcoes = rbind(CORRECOES_GRAFIA,
+                                      data.frame(errado = "Recieta", certo = "Receita")))
+```
+
+O argumento `correcoes` também aceita um vetor com nomes, como `c("Recieta" = "Receita")`, mas para palavras com acento prefira a tabela, que funciona em qualquer sistema.
 
 ## Importação de arquivo local (CSV)
 
@@ -126,7 +136,13 @@ padronizar_planilha("dados.csv", "dados_padronizado.xlsx", sep = ",", dec = ".")
 padronizar_planilha("dados.csv", "dados_padronizado.xlsx", codificacao = "latin1")
 ```
 
-Valores de texto como `1.234,56`, `(500,00)` (negativo) e `-` (zero) são convertidos em número. Se algum valor não puder ser convertido, a função para e informa a coluna e a linha com problema.
+Valores de texto são convertidos em número conforme o argumento `dec`:
+
+- `dec = ","` (padrão): aceita `1.234,56`;
+- `dec = "."`: aceita `1,234.56`;
+- nos dois casos, `(500,00)` é negativo e `-` (também `–` e `—`) é zero.
+
+Se algum valor não seguir o formato (por exemplo, `1234.56` com `dec = ","`), a função para e informa a coluna e a linha com problema, em vez de ler o número errado. O argumento `dec` vale também para células de texto em arquivos Excel; colunas do Excel que misturam números e texto em formatos diferentes devem ser padronizadas antes.
 
 **Formato esperado do arquivo (CSV ou planilha):** uma aba (no caso do Excel), com a coluna `MEDIDAS FINANCEIRAS` (nome do indicador) e **duas** colunas de ano, por exemplo `2025` e `2024`. Os valores são em R$ mil, conforme as demonstrações financeiras.
 
@@ -134,12 +150,13 @@ Valores de texto como `1.234,56`, `(500,00)` (negativo) e `-` (zero) são conver
 
 | Arquivo | Função |
 |---|---|
-| `funcoes_padronizacao.R` | Função `padronizar_planilha()`, usada pelos três scripts |
+| `funcoes_padronizacao.R` | Função `padronizar_planilha()` (usada pelos três scripts), conversão de números e tabela `CORRECOES_GRAFIA` |
 | `Aeroporto_RJ_2025.R` | Concessionária Aeroporto Rio de Janeiro, 2025 vs 2024 |
 | `PRS_Aeroporto_25.R` | PRS Aeroportos, 2025 vs 2024 |
 | `Concessionaria_dos_Aeroportos_de_Manaus.R` | Concessionária dos Aeroportos da Amazônia, 2024 vs 2023 |
 | `exemplo_ficticio.xlsx` | Dados fictícios para testar a função (Excel) |
 | `exemplo_ficticio.csv` | Os mesmos dados fictícios, em CSV |
+| `tests/testthat/test-padronizacao.R` | Testes automáticos da função (veja [Testes](#testes)) |
 | `Poster_Paulo_Dina.pdf` | Pôster apresentado no encontro |
 
 As planilhas das concessionárias **não** estão neste repositório.
@@ -154,6 +171,17 @@ Este código faz a **padronização e o cálculo das variações**. Os indicador
 
 Próximo passo: automatizar o cálculo dos indicadores (liquidez, estrutura de capital, endividamento e rentabilidade), tendo como base o pacote [adcontabil](https://github.com/LissandroSousa/adcontabil.R).
 
+## Testes
+
+Os testes usam só dados fictícios e gravam tudo em pastas temporárias. Com o diretório de trabalho na raiz do projeto:
+
+```r
+install.packages("testthat")   # uma vez
+testthat::test_dir("tests/testthat")
+```
+
+Eles conferem, entre outros pontos, a tabela do exemplo deste README, a base negativa e a base zero, o CSV nos formatos brasileiro e americano e as mensagens de erro.
+
 ## Contribuição
 
 Contribuições são bem-vindas. Para sugerir uma melhoria ou relatar um problema:
@@ -161,7 +189,7 @@ Contribuições são bem-vindas. Para sugerir uma melhoria ou relatar um problem
 1. abra uma *issue* descrevendo o que aconteceu (de preferência com a mensagem de erro e um exemplo pequeno, com dados fictícios);
 2. para propor uma alteração no código, faça um *fork*, crie uma *branch* e envie um *pull request*.
 
-Para incluir uma nova concessionária, copie um dos scripts (por exemplo, `PRS_Aeroporto_25.R`) e troque os caminhos de entrada e de saída. Não envie demonstrações que não sejam públicas.
+Para incluir uma nova concessionária, copie um dos scripts (por exemplo, `PRS_Aeroporto_25.R`) e troque os caminhos de entrada e de saída. Não envie demonstrações que não sejam públicas (a pasta `Coleta de dados/` já está no `.gitignore`) e rode os testes antes de abrir o *pull request*.
 
 ## Licença
 

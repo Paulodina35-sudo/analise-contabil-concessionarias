@@ -48,3 +48,8 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Dados das concessionarias (demonstracoes que podem nao ser publicas) e saidas geradas
+Coleta de dados/
+*_padronizado.xlsx
+*_padronizada.xlsx
