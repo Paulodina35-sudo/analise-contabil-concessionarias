@@ -17,6 +17,19 @@ A versão final dos scripts foi revisada com ajuda de IA.
 - **Exportação em `.xlsx`**, sem nunca sobrescrever o arquivo de entrada.
 - **Mensagens de erro claras** quando o arquivo não tem a estrutura esperada.
 
+## Estrutura do repositório
+
+```
+analise-contabil-concessionarias/
+├── funcoes/    Funções reutilizáveis em R
+├── scripts/    Scripts de análise e padronização em R
+├── dados/      Planilhas Excel e arquivos CSV
+├── poster/     Pôster apresentado no encontro
+├── README.md
+├── LICENSE
+└── .gitignore
+```
+
 ## Instalação
 
 Este repositório não é um pacote do R: basta baixar os arquivos e instalar duas dependências.
@@ -35,11 +48,11 @@ Este repositório não é um pacote do R: basta baixar os arquivos e instalar du
 
    O `writexl` é sempre necessário (grava o resultado). O `readxl` só é usado para ler `.xlsx` e `.xls`; a leitura de `.csv` usa apenas o R base.
 
-3. Abra o projeto no RStudio (ou use `setwd()`) de modo que o diretório de trabalho seja a **raiz do projeto**, a pasta onde está o arquivo `funcoes_padronizacao.R`.
+3. Abra o projeto no RStudio (ou use `setwd()`) de modo que o diretório de trabalho seja a **raiz do projeto**, a pasta que contém as pastas `funcoes/`, `scripts/` e `dados/`.
 
 ## Exemplo de Uso
 
-O arquivo `exemplo_ficticio.xlsx`, na raiz do projeto, traz **dados fictícios** (inventados, sem relação com nenhuma empresa), só para demonstrar o funcionamento. O conteúdo dele é:
+O arquivo `dados/exemplo_ficticio.xlsx`, na pasta `dados/`, traz **dados fictícios** (inventados, sem relação com nenhuma empresa), só para demonstrar o funcionamento. O conteúdo dele é:
 
 | MEDIDAS FINANCEIRAS | 2025 | 2024 |
 |---|---:|---:|
@@ -50,10 +63,10 @@ O arquivo `exemplo_ficticio.xlsx`, na raiz do projeto, traz **dados fictícios**
 | Item sem valor no ano base | 100 | 0 |
 
 ```r
-source("funcoes_padronizacao.R")
+source("funcoes/funcoes_padronizacao.R")
 
 padronizar_planilha(
-  entrada = "exemplo_ficticio.xlsx",
+  entrada = "dados/exemplo_ficticio.xlsx",
   saida   = "exemplo_ficticio_padronizado.xlsx"
 )
 ```
@@ -73,7 +86,7 @@ Repare que "Intagível" foi corrigido para "Intangível", que a passagem de prej
 Para as concessionárias do projeto, rode o script correspondente (com as planilhas na pasta `Coleta de dados/`):
 
 ```r
-source("Aeroporto_RJ_2025.R")
+source("scripts/Aeroporto_RJ_2025.R")
 ```
 
 ## Padronização
@@ -90,7 +103,7 @@ Para cada arquivo de entrada, a função `padronizar_planilha()`:
 
 **Variação percentual:** `(ano atual − ano base) / |ano base| × 100`, arredondada em 2 casas. Usa-se o valor absoluto do ano base para que a mudança de prejuízo para lucro apareça como variação positiva. Quando o ano base é zero ou está vazio, o resultado fica vazio (`NA`).
 
-**Correção de grafia:** a tabela `CORRECOES_GRAFIA`, no início de `funcoes_padronizacao.R`, tem uma coluna `errado` e uma `certo`. Para acrescentar uma correção, inclua um valor em cada coluna ou passe o argumento `correcoes` (que substitui a tabela padrão; use `rbind(CORRECOES_GRAFIA, ...)` para somar):
+**Correção de grafia:** a tabela `CORRECOES_GRAFIA`, no início de `funcoes/funcoes_padronizacao.R`, tem uma coluna `errado` e uma `certo`. Para acrescentar uma correção, inclua um valor em cada coluna ou passe o argumento `correcoes` (que substitui a tabela padrão; use `rbind(CORRECOES_GRAFIA, ...)` para somar):
 
 ```r
 padronizar_planilha("dados.csv", "dados_padronizado.xlsx",
@@ -111,11 +124,11 @@ padronizar_planilha(
 )
 ```
 
-O arquivo `exemplo_ficticio.csv`, na raiz do projeto, traz os mesmos dados fictícios do exemplo em Excel, em CSV no formato brasileiro. Para testar:
+O arquivo `dados/exemplo_ficticio.csv`, na pasta `dados/`, traz os mesmos dados fictícios do exemplo em Excel, em CSV no formato brasileiro. Para testar:
 
 ```r
 padronizar_planilha(
-  entrada = "exemplo_ficticio.csv",
+  entrada = "dados/exemplo_ficticio.csv",
   saida   = "exemplo_ficticio_csv_padronizado.xlsx"
 )
 ```
@@ -150,13 +163,13 @@ Se algum valor não seguir o formato (por exemplo, `1234.56` com `dec = ","`), a
 
 | Arquivo | Função |
 |---|---|
-| `funcoes_padronizacao.R` | Função `padronizar_planilha()` (usada pelos três scripts), conversão de números e tabela `CORRECOES_GRAFIA` |
-| `Aeroporto_RJ_2025.R` | Concessionária Aeroporto Rio de Janeiro, 2025 vs 2024 |
-| `PRS_Aeroporto_25.R` | PRS Aeroportos, 2025 vs 2024 |
-| `Concessionaria_dos_Aeroportos_de_Manaus.R` | Concessionária dos Aeroportos da Amazônia, 2024 vs 2023 |
-| `exemplo_ficticio.xlsx` | Dados fictícios para testar a função (Excel) |
-| `exemplo_ficticio.csv` | Os mesmos dados fictícios, em CSV |
-| `Poster_Paulo_Dina.pdf` | Pôster apresentado no encontro |
+| `funcoes/funcoes_padronizacao.R` | Função `padronizar_planilha()` (usada pelos três scripts), conversão de números e tabela `CORRECOES_GRAFIA` |
+| `scripts/Aeroporto_RJ_2025.R` | Concessionária Aeroporto Rio de Janeiro, 2025 vs 2024 |
+| `scripts/PRS_Aeroporto_25.R` | PRS Aeroportos, 2025 vs 2024 |
+| `scripts/Concessionaria_dos_Aeroportos_de_Manaus.R` | Concessionária dos Aeroportos da Amazônia, 2024 vs 2023 |
+| `dados/exemplo_ficticio.xlsx` | Dados fictícios para testar a função (Excel) |
+| `dados/exemplo_ficticio.csv` | Os mesmos dados fictícios, em CSV |
+| `poster/Poster_Paulo_Dina.pdf` | Pôster apresentado no encontro |
 
 As planilhas das concessionárias **não** estão neste repositório.
 
@@ -177,10 +190,8 @@ Contribuições são bem-vindas. Para sugerir uma melhoria ou relatar um problem
 1. abra uma *issue* descrevendo o que aconteceu (de preferência com a mensagem de erro e um exemplo pequeno, com dados fictícios);
 2. para propor uma alteração no código, faça um *fork*, crie uma *branch* e envie um *pull request*.
 
-Para incluir uma nova concessionária, copie um dos scripts (por exemplo, `PRS_Aeroporto_25.R`) e troque os caminhos de entrada e de saída. Não envie demonstrações que não sejam públicas (a pasta `Coleta de dados/` já está no `.gitignore`).
+Para incluir uma nova concessionária, copie um dos scripts da pasta `scripts/` (por exemplo, `PRS_Aeroporto_25.R`) e troque os caminhos de entrada e de saída. Não envie demonstrações que não sejam públicas (a pasta `Coleta de dados/` já está no `.gitignore`).
 
 ## Licença
 
 MIT.
-
-
