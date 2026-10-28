@@ -6,7 +6,7 @@
 # da planilha abaixo se o seu arquivo tiver outro nome.
 # Rode com o diretório de trabalho na raiz do projeto (ex.: projeto do RStudio).
 
-source("funcoes_padronizacao.R")
+source("funcoes/funcoes_padronizacao.R")
 
 padronizar_planilha(
   entrada = "Coleta de dados/Aeroporto de Manaus/planilha_preenchida_Concessionaria_dos_Aeroportos.xlsx",
